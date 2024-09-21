@@ -1,7 +1,9 @@
 ---
 - name: Automate Desktop Setup
   hosts: localhost
-  become: yes  # Gain sudo privileges where required
+  vars:
+    userid: gedaas
+    groupid: gedas
   tasks:
 
     - name: Install zsh and tmux
@@ -11,70 +13,62 @@
           - tmux
         state: present
         update_cache: yes
+      become: yes
 
     - name: Change default shell to zsh
       shell: chsh -s $(which zsh)
-      become_user: "{{ ansible_user_id }}"
       when: ansible_env.SHELL != "/usr/bin/zsh"
+      become: yes
+    
+    - name: Delete a directory
+      file:
+        path: "{{ ansible_env.HOME }}/.oh-my-zsh"
+        state: absent
 
     - name: Copy .oh-my-zsh directory
-      copy:
-        src: files/.oh-my-zsh/
-        dest: "{{ ansible_env.HOME }}/.oh-my-zsh/"
-        owner: "{{ ansible_user_id }}"
-        group: "{{ ansible_user_id }}"
-        mode: '0755'
-        recurse: yes  # Recursively copy the entire directory
+      command:
+        cp -r files/.oh-my-zsh {{ ansible_env.HOME }}/.oh-my-zsh
 
     - name: Copy custom .zshrc
       copy:
         src: files/.zshrc
         dest: "{{ ansible_env.HOME }}/.zshrc"
-        owner: "{{ ansible_user_id }}"
+        owner: "{{ userid }}"
         mode: '0644'
 
     - name: Copy custom .p10k.zsh for Powerlevel10k configuration
       copy:
         src: files/.p10k.zsh
         dest: "{{ ansible_env.HOME }}/.p10k.zsh"
-        owner: "{{ ansible_user_id }}"
+        owner: "{{ userid }}"
         mode: '0644'
 
     - name: Copy Nerd Fonts to local user fonts directory
       copy:
         src: files/FiraCode/FiraCodeNerdFont-Medium.ttf
         dest: "{{ ansible_env.HOME }}/.local/share/fonts/FiraCodeNerdFont-Medium.ttf"
-        owner: "{{ ansible_user_id }}"
+        owner: "{{ userid }}"
         mode: '0644'
 
     - name: Update font cache
-      command: fc-cache -fv
+      command: fc-cache -fv "{{ ansible_env.HOME }}/.local/share/fonts/"
 
     - name: Load GNOME Terminal configuration from backup
-      command: dconf load /org/gnome/terminal/ < "{{ playbook_dir }}/files/gnome-terminal-backup"
-      become_user: "{{ ansible_user_id }}"
+      shell: dconf load /org/gnome/terminal/ < "{{ playbook_dir }}/files/gnome-terminal-backup"
 
     - name: Set desktop wallpaper
-      command: gsettings set org.gnome.desktop.background picture-uri-dark 'file:///home/{{ ansible_user_id }}/source/terminalConfig/wallpaper/neon-mountain.jpg'
-      become_user: "{{ ansible_user_id }}"
+      command: gsettings set org.gnome.desktop.background picture-uri-dark 'file:///home/{{ userid }}/source/terminalConfig/wallpaper/neon-mountain.jpg'
 
     - name: Copy tmux config
       copy:
         src: files/.tmux.conf
         dest: "{{ ansible_env.HOME }}/.tmux.conf"
-        owner: "{{ ansible_user_id }}"
-        mode: '0644'
+      become: yes
 
     - name: Copy bash aliases
       copy:
         src: files/.bash_aliases
         dest: "{{ ansible_env.HOME }}/.bash_aliases"
-        owner: "{{ ansible_user_id }}"
+        owner: "{{ userid }}"
         mode: '0644'
-
-    - name: Source .zshrc (so aliases will take effect)
-      shell: source "{{ ansible_env.HOME }}/.zshrc"
-      become_user: "{{ ansible_user_id }}"
-      args:
-        executable: /bin/zsh
 
