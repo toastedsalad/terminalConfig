@@ -24,11 +24,23 @@
         * aliases are in files
         * aliases are already sourced in .zshrc
 
-2. 
+# Life on surface
+Had to disable wayland. 
+/etc/gdm3/custom.conf
 
+Graphics firmware was not available in the ubuntu upstream and neither was shipped together with the kernel.
+Firmware directory is directly checked out from upstream repo:
+/usr/lib/firmware
+https://gitlab.com/kernel-firmware/linux-firmware
+
+That's about it with the hacks. I had to reinstall the latest kernel once. 
+Boot issues with black screen after decrypting the disk.
+
+TODO: I should probably pin packages, or simply update when I intend to restart.
+And have some time to bring things back to life
+
+# Notes on the shell
 ## All the cool kids are using zhshell
-
-So let's do that.
 
 ```
 sudo apt install zsh
