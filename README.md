@@ -24,7 +24,7 @@
         * aliases are in files
         * aliases are already sourced in .zshrc
 
-# Life on surface
+# Life on a Surface Laptop 6
 Had to disable wayland. 
 /etc/gdm3/custom.conf
 
