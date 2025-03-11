@@ -1,4 +1,13 @@
-alias setmygit='git config user.email gedim.blazys@gmail.com && git config user.email gedim.blazys@gmail.com'
+alias vim='nvim'
+
+git-set-personal() {
+    git config user.name "Gediminas Blazys"
+    git config user.email "blazys@pm.me"
+
+    echo "Git configured for this repository:"
+    git config user.name
+    git config user.email
+}
 
 netdot-webapi8-create() {
     echo -n "Enter project name."
@@ -20,3 +29,11 @@ netdot-nunit-create() {
     read projectName
     dotnet new nunit -n "$projectName"
 }
+
+netdot-app8-create() {
+    echo -n "Enter project name."
+    echo -n ""
+    read projectName
+    dotnet new console -n "$projectName" --use-program-main --framework net8.0
+}
+
