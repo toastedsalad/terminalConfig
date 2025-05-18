@@ -64,6 +64,20 @@
         src: files/.tmux.conf
         dest: "/home/{{ userid }}/.tmux.conf"
       become: yes
+      tags: [tmux-tpm-conf]
+
+    - name: Create tmux plugin dir
+      ansible.builtin.file:
+        path: "/home/{{ userid }}/.tmux/plugins/tpm"
+        state: directory
+        owner: "{{ userid }}"
+      tags: [tmux-tpm-conf]
+
+    - name: Get tmux plugin installer from git
+      ansible.builtin.git:
+        repo: 'https://github.com/tmux-plugins/tpm'
+        dest: "/home/{{ userid }}/.tmux/plugins/tpm"
+      tags: [tmux-tpm-conf]
 
     - name: Copy bash aliases
       copy:
