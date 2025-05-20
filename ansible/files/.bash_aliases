@@ -1,5 +1,7 @@
 alias vim='nvim'
 
+alias clog='DEBEMAIL=geblazys@microsoft.com dch -i --distribution unstable --no-auto-nmu'
+
 git-set-personal() {
     git config user.name "Gediminas Blazys"
     git config user.email "blazys@pm.me"

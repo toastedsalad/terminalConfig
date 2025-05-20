@@ -85,4 +85,5 @@
         dest: "/home/{{ userid }}/.bash_aliases"
         owner: "{{ userid }}"
         mode: '0644'
+      tags: [aliases]
 
