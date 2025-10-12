@@ -35,6 +35,7 @@
         dest: "/home/{{ userid }}/.zshrc"
         owner: "{{ userid }}"
         mode: '0644'
+      tags: [zshrc]
 
     - name: Copy custom .p10k.zsh for Powerlevel10k configuration
       copy:
