@@ -5,6 +5,7 @@
     userid: mellow
     groupid: mellow
     ohmyzsh_repo: "https://github.com/ohmyzsh/ohmyzsh.git"
+    pyenv_repo: "https://github.com/pyenv/pyenv.git"
   tasks:
     - name: Install zsh and tmux
       apt:
@@ -64,6 +65,15 @@
       git:
         repo: "{{ ohmyzsh_repo }}"
         dest: "/home/{{ userid }}/.oh-my-zsh"
+        version: master
+        update: yes
+      tags: [zsh]
+
+    - name: Clone pyenv
+      become: false
+      git:
+        repo: "{{ pyenv_repo }}"
+        dest: "/home/{{ userid }}/.pyenv"
         version: master
         update: yes
       tags: [zsh]
