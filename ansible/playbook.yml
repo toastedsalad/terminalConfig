@@ -1,4 +1,9 @@
 ---
+# TODO manually setup git credential manager
+#      https://github.com/git-ecosystem/git-credential-manager/blob/release/docs/install.md
+# TODO manually install npm
+#      https://nodejs.org/en/download
+# TODO manually install tmux plugins via KEY + I after the playbook
 - name: Automate Desktop Setup
   hosts: localhost
   vars:
@@ -12,6 +17,8 @@
         name: 
           - zsh
           - tmux
+          - ripgrep
+          - xclip
         state: present
         update_cache: yes
       become: yes
