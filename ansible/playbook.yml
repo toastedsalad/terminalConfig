@@ -14,7 +14,7 @@
         state: present
         update_cache: yes
       become: yes
-      tags: [zsh]
+      tags: [zsh, tmux-tpm-conf]
 
     - name: Ensure /opt directory exists
       ansible.builtin.file:
@@ -22,6 +22,7 @@
         state: directory
         mode: '0755'
       become: yes
+      tags: [nvim]
 
     - name: Download latest Neovim tarball
       ansible.builtin.get_url:
@@ -30,18 +31,21 @@
         mode: '0644'
         force: yes
       become: yes
+      tags: [nvim]
 
     - name: Remove existing Neovim directory if present
       ansible.builtin.file:
         path: /opt/nvim-linux-x86_64
         state: absent
       become: yes
+      tags: [nvim]
 
     - name: Extract Neovim archive into /opt
       ansible.builtin.unarchive:
         src: /opt/nvim-linux-x86_64.tar.gz
         dest: /opt/
       become: yes
+      tags: [nvim]
 
     - name: Change default shell to zsh for root
       shell: chsh -s $(which zsh)
@@ -62,6 +66,7 @@
         dest: "/home/{{ userid }}/.oh-my-zsh"
         version: master
         update: yes
+      tags: [zsh]
 
     - name: Copy custom .zshrc
       copy:
@@ -78,6 +83,7 @@
         owner: "{{ userid }}"
         group: "{{ groupid }}"
         mode: '0755'
+      tags: [zsh]
 
     - name: Copy Nerd Fonts to local user fonts directory
       copy:
@@ -97,7 +103,7 @@
 
     - name: Set desktop wallpaper
       command: gsettings set org.gnome.desktop.background picture-uri-dark 'file:///home/{{ userid }}/source/terminalConfig/ansible/files/wallpaper/neon-mountain.jpg'
-      tags: [zsh]
+      tags: [env]
 
     - name: Copy tmux config
       copy:
@@ -125,5 +131,5 @@
         dest: "/home/{{ userid }}/.bash_aliases"
         owner: "{{ userid }}"
         mode: '0644'
-      tags: [aliases]
+      tags: [env]
 
