@@ -2,10 +2,10 @@
 - name: Automate Desktop Setup
   hosts: localhost
   vars:
-    userid: gedaas
-    groupid: gedas
+    userid: mellow
+    groupid: mellow
+    ohmyzsh_repo: "https://github.com/ohmyzsh/ohmyzsh.git"
   tasks:
-
     - name: Install zsh and tmux
       apt:
         name: 
@@ -14,20 +14,54 @@
         state: present
         update_cache: yes
       become: yes
+      tags: [zsh]
 
-    - name: Change default shell to zsh
+    - name: Ensure /opt directory exists
+      ansible.builtin.file:
+        path: /opt
+        state: directory
+        mode: '0755'
+      become: yes
+
+    - name: Download latest Neovim tarball
+      ansible.builtin.get_url:
+        url: https://github.com/neovim/neovim/releases/latest/download/nvim-linux-x86_64.tar.gz
+        dest: /opt/nvim-linux-x86_64.tar.gz
+        mode: '0644'
+        force: yes
+      become: yes
+
+    - name: Remove existing Neovim directory if present
+      ansible.builtin.file:
+        path: /opt/nvim-linux-x86_64
+        state: absent
+      become: yes
+
+    - name: Extract Neovim archive into /opt
+      ansible.builtin.unarchive:
+        src: /opt/nvim-linux-x86_64.tar.gz
+        dest: /opt/
+      become: yes
+
+    - name: Change default shell to zsh for root
       shell: chsh -s $(which zsh)
       when: ansible_env.SHELL != "/usr/bin/zsh"
       become: yes
+      tags: [zsh]
     
-    - name: Delete a directory
-      file:
-        path: "/home/{{ userid }}/.oh-my-zsh"
-        state: absent
+    - name: Change default shell to zsh for user
+      shell: chsh -s $(which zsh) "{{ userid }}"
+      when: ansible_env.SHELL != "/usr/bin/zsh"
+      become: yes 
+      tags: [zsh]
 
-    - name: Copy .oh-my-zsh directory
-      command:
-        cp -r files/.oh-my-zsh /home/{{ userid }}/.oh-my-zsh
+    - name: Clone Oh My Zsh repository
+      become: false
+      git:
+        repo: "{{ ohmyzsh_repo }}"
+        dest: "/home/{{ userid }}/.oh-my-zsh"
+        version: master
+        update: yes
 
     - name: Copy custom .zshrc
       copy:
@@ -35,14 +69,15 @@
         dest: "/home/{{ userid }}/.zshrc"
         owner: "{{ userid }}"
         mode: '0644'
-      tags: [zshrc]
+      tags: [zsh]
 
-    - name: Copy custom .p10k.zsh for Powerlevel10k configuration
-      copy:
-        src: files/.p10k.zsh
-        dest: "/home/{{ userid }}/.p10k.zsh"
+    - name: Ensure font directory exists
+      ansible.builtin.file:
+        path: "/home/{{ userid }}/.local/share/fonts/"
+        state: directory
         owner: "{{ userid }}"
-        mode: '0644'
+        group: "{{ groupid }}"
+        mode: '0755'
 
     - name: Copy Nerd Fonts to local user fonts directory
       copy:
@@ -50,15 +85,19 @@
         dest: "/home/{{ userid }}/.local/share/fonts/FiraCodeNerdFont-Medium.ttf"
         owner: "{{ userid }}"
         mode: '0644'
+      tags: [zsh]
 
     - name: Update font cache
       command: fc-cache -fv "/home/{{ userid }}/.local/share/fonts/"
+      tags: [zsh]
 
     - name: Load GNOME Terminal configuration from backup
       shell: dconf load /org/gnome/terminal/ < "{{ playbook_dir }}/files/gnome-terminal-backup"
+      tags: [zsh]
 
     - name: Set desktop wallpaper
       command: gsettings set org.gnome.desktop.background picture-uri-dark 'file:///home/{{ userid }}/source/terminalConfig/ansible/files/wallpaper/neon-mountain.jpg'
+      tags: [zsh]
 
     - name: Copy tmux config
       copy:
