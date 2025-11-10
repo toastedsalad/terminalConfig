@@ -120,5 +120,5 @@ export PYENV_ROOT="$HOME/.pyenv"
 [[ -d $PYENV_ROOT/bin ]] && export PATH="$PYENV_ROOT/bin:$PATH"
 eval "$(pyenv init - zsh)"
 
-export PATH="$PATH:/home/gedaas/.local/share/nvim/mason/packages/omnisharp/"
+export PATH="$PATH:/home/mellow/.local/share/nvim/mason/packages/omnisharp/"
 

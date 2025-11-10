@@ -1,7 +1,7 @@
 ---
 # TODO manually setup git credential manager
 #      https://github.com/git-ecosystem/git-credential-manager/blob/release/docs/install.md
-# TODO manually install npm
+# TODO manually install npm, some lsps depend on it.
 #      https://nodejs.org/en/download
 # TODO manually install tmux plugins via KEY + I after the playbook
 - name: Automate Desktop Setup
@@ -83,7 +83,6 @@
         dest: "/home/{{ userid }}/.pyenv"
         version: master
         update: yes
-      tags: [zsh]
 
     - name: Copy custom .zshrc
       copy:
@@ -100,7 +99,6 @@
         owner: "{{ userid }}"
         group: "{{ groupid }}"
         mode: '0755'
-      tags: [zsh]
 
     - name: Copy Nerd Fonts to local user fonts directory
       copy:
@@ -108,15 +106,12 @@
         dest: "/home/{{ userid }}/.local/share/fonts/FiraCodeNerdFont-Medium.ttf"
         owner: "{{ userid }}"
         mode: '0644'
-      tags: [zsh]
 
     - name: Update font cache
       command: fc-cache -fv "/home/{{ userid }}/.local/share/fonts/"
-      tags: [zsh]
 
     - name: Load GNOME Terminal configuration from backup
       shell: dconf load /org/gnome/terminal/ < "{{ playbook_dir }}/files/gnome-terminal-backup"
-      tags: [zsh]
 
     - name: Set desktop wallpaper
       command: gsettings set org.gnome.desktop.background picture-uri-dark 'file:///home/{{ userid }}/source/terminalConfig/ansible/files/wallpaper/neon-mountain.jpg'
