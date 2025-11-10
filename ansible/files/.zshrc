@@ -121,4 +121,4 @@ export PYENV_ROOT="$HOME/.pyenv"
 eval "$(pyenv init - zsh)"
 
 export PATH="$PATH:/home/mellow/.local/share/nvim/mason/packages/omnisharp/"
-
+export PATH="$PATH:/home/mellow/.dotnet/tools"
