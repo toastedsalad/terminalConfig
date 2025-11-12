@@ -122,3 +122,6 @@ eval "$(pyenv init - zsh)"
 
 export PATH="$PATH:/home/mellow/.local/share/nvim/mason/packages/omnisharp/"
 export PATH="$PATH:/home/mellow/.dotnet/tools"
+
+export VIRTUAL_ENV_DISABLE_PROMPT=1
+PROMPT='${VIRTUAL_ENV:+(${VIRTUAL_ENV:t}) }%(!.%{$fg[red]%}.%{$fg[green]%})%~$(git_prompt_info)%{$reset_color%} '
